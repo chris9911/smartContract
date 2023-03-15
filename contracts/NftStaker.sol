@@ -8,12 +8,19 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Generator.sol";
 
 
+
 contract NftStaker is Ownable {
     IERC1155 public parentNFT;
     Generator public generator;
     address payable public ownerToPay;
-    uint256 public temp;
-    uint256 public result;
+    uint256 public seeMsgValue;
+    uint256 public seeRandom;
+
+    mapping(address => Stake) public stakes;
+    mapping(address => uint256) public stakingTime;    
+    mapping(address => uint256[]) private _values;  
+
+
     
     struct Stake {
         uint256 tokenId;
@@ -25,6 +32,19 @@ contract NftStaker is Ownable {
         if (msg.value < fee) { revert(); }
         _;
     }
+    modifier notPresentFee(){
+       for(uint i=0;i<_values[msg.sender].length;i++){
+        if(_values[msg.sender][i]==msg.value){
+            revert();
+            }
+        }
+        _values[msg.sender].push(msg.value);
+        if(_values[msg.sender].length==100){
+            delete _values[msg.sender];
+        }
+        _;
+    }    
+
     constructor() payable{
         parentNFT = IERC1155(0xd9145CCE52D386f254917e481eB44e9943F39138);
         generator = Generator(0xd9145CCE52D386f254917e481eB44e9943F39138);
@@ -32,29 +52,29 @@ contract NftStaker is Ownable {
     }
 
 
-    // map staker address to stake details
-    mapping(address => Stake) public stakes;
-
-    // map staker to total staking time 
-    mapping(address => uint256) public stakingTime;    
-
-
     function stake(uint256 _tokenId, uint256 _amount) public {
         stakes[msg.sender] = Stake(_tokenId, _amount, block.timestamp); 
         parentNFT.safeTransferFrom(msg.sender, address(this), _tokenId, _amount, "0x00");
     } 
 
-    function unstake() public payable {
+    function unstake() public payable requiresFee(0.001 ether){
         parentNFT.safeTransferFrom(address(this), msg.sender, stakes[msg.sender].tokenId, stakes[msg.sender].amount, "0x00");
         stakingTime[msg.sender] += (block.timestamp - stakes[msg.sender].timestamp);
         delete stakes[msg.sender];
-        temp=stakingTime[msg.sender]/10;
-        result=random(0,100);
-        if(result<=temp){
+        uint256 _temp=stakingTime[msg.sender]/10;
+        uint256 _result=random(0,100);
+        if(_result<=_temp){
           generator.getLuckyReward(msg.sender);
         }
 
-    }      
+    }  
+    function testRandom()public payable{
+        seeRandom=random(0,100);
+    }    
+    function testBlock()public payable notPresentFee{
+        seeMsgValue=msg.value;
+    }    
+
 
      function onERC1155Received(
         address operator,
@@ -66,8 +86,8 @@ contract NftStaker is Ownable {
         return bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"));
     }
 
-   function random(uint minNumber,uint maxNumber) private view returns (uint amount) {
-     amount = uint(keccak256(abi.encodePacked(block.timestamp, msg.sender, block.number))) % (maxNumber-minNumber);
+   function random(uint minNumber,uint maxNumber) private notPresentFee returns (uint amount) {
+     amount = uint(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, block.number, msg.value))) % (maxNumber-minNumber);
      amount = amount + minNumber;
      return amount;
      } 

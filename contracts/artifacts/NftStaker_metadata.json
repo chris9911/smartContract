@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.17+commit.8df45f5f"
+		"version": "0.8.19+commit.7dd6d404"
 	},
 	"language": "Solidity",
 	"output": {
@@ -143,7 +143,20 @@
 			},
 			{
 				"inputs": [],
-				"name": "result",
+				"name": "seeMsgValue",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "seeRandom",
 				"outputs": [
 					{
 						"internalType": "uint256",
@@ -222,15 +235,16 @@
 			},
 			{
 				"inputs": [],
-				"name": "temp",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
+				"name": "testBlock",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testRandom",
+				"outputs": [],
+				"stateMutability": "payable",
 				"type": "function"
 			},
 			{
@@ -304,7 +318,7 @@
 		"compilationTarget": {
 			"contracts/NftStaker.sol": "NftStaker"
 		},
-		"evmVersion": "london",
+		"evmVersion": "paris",
 		"libraries": {},
 		"metadata": {
 			"bytecodeHash": "ipfs"
@@ -429,11 +443,11 @@
 			]
 		},
 		"contracts/NftStaker.sol": {
-			"keccak256": "0x7c21c6933f2d8b35c5fb8d26be20c8cd1356650cd8124915442e939bcbd607f4",
+			"keccak256": "0xdedb5709147b8b2853ee133d048dc6cbe568b602ada5df232596f9afd249b228",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://eb624797ef10a09e6567806cd9e94904e6d27e4545f6a0be225fad5092790ca0",
-				"dweb:/ipfs/QmVEpdRsiVJwVjxVnpAdZ7RkeBS9G9v7rKQTy1BmQpjUJD"
+				"bzz-raw://bc151eab4c061f36169854f1a770c8435e65d6f0ceb417190f239779392cf5ba",
+				"dweb:/ipfs/QmXpp88wMkZj6SQCojrZXYg2mByqyVzpN59KUYowXVxW5p"
 			]
 		}
 	},
