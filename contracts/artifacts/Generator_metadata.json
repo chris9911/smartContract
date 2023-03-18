@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.19+commit.7dd6d404"
+		"version": "0.8.18+commit.87f61d96"
 	},
 	"language": "Solidity",
 	"output": {
@@ -202,19 +202,6 @@
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "baseValue",
-				"outputs": [
-					{
-						"internalType": "uint256",
-						"name": "",
-						"type": "uint256"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "uint256",
@@ -239,6 +226,11 @@
 						"internalType": "address",
 						"name": "_user",
 						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_reward",
+						"type": "uint256"
 					}
 				],
 				"name": "getLuckyReward",
@@ -672,11 +664,11 @@
 			]
 		},
 		"contracts/Generator.sol": {
-			"keccak256": "0x0adb6a67fe1a3b17742b35185c1ef9176848cba0559d695e0aa17c76f00d118e",
+			"keccak256": "0x89298df5df10e9522a56f5120368bd962cee5906e1590f2275ea5a8eac5a12ca",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://6b159ccbb088532ed25f60b4678bd15e5b7d8e122ecf77691e5cb63528fd8c63",
-				"dweb:/ipfs/QmXBWLwQgxFpSXbgbc9iVZqtxHNXv79VxVcRyspbWHVxyq"
+				"bzz-raw://c980e3b287a340a406def285cb70722d37e75f677654c6ca235e13bc436471cf",
+				"dweb:/ipfs/Qma3owiLntWUjidvfbQzy7V6aQzebbfA4ziLhaAprEm4Hc"
 			]
 		}
 	},

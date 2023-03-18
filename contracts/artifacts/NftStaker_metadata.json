@@ -1,6 +1,6 @@
 {
 	"compiler": {
-		"version": "0.8.19+commit.7dd6d404"
+		"version": "0.8.18+commit.87f61d96"
 	},
 	"language": "Solidity",
 	"output": {
@@ -47,13 +47,6 @@
 					}
 				],
 				"stateMutability": "view",
-				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "notPayable",
-				"outputs": [],
-				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -143,6 +136,13 @@
 			},
 			{
 				"inputs": [],
+				"name": "resumeContract",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "seeMsgValue",
 				"outputs": [
 					{
@@ -180,7 +180,25 @@
 						"type": "uint256"
 					}
 				],
-				"name": "stake",
+				"name": "stakeNft",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_tokenId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_amount",
+						"type": "uint256"
+					}
+				],
+				"name": "stakeToken",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -235,6 +253,13 @@
 			},
 			{
 				"inputs": [],
+				"name": "stopContract",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "testBlock",
 				"outputs": [],
 				"stateMutability": "payable",
@@ -245,24 +270,6 @@
 				"name": "testRandom",
 				"outputs": [],
 				"stateMutability": "payable",
-				"type": "function"
-			},
-			{
-				"inputs": [
-					{
-						"internalType": "address payable",
-						"name": "_to",
-						"type": "address"
-					},
-					{
-						"internalType": "uint256",
-						"name": "_amount",
-						"type": "uint256"
-					}
-				],
-				"name": "transfer",
-				"outputs": [],
-				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
@@ -443,11 +450,11 @@
 			]
 		},
 		"contracts/NftStaker.sol": {
-			"keccak256": "0xdedb5709147b8b2853ee133d048dc6cbe568b602ada5df232596f9afd249b228",
+			"keccak256": "0x89c70437423fd5dc1be6e7719b8b3fcba9740bc26633d3300f09c29d04bf9184",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://bc151eab4c061f36169854f1a770c8435e65d6f0ceb417190f239779392cf5ba",
-				"dweb:/ipfs/QmXpp88wMkZj6SQCojrZXYg2mByqyVzpN59KUYowXVxW5p"
+				"bzz-raw://7d3e55a78cebbdd35e5b1f992f1d26254208848ff7d265952fb6b7474b630a92",
+				"dweb:/ipfs/Qmc15hS3pw2YZruwYwodxXy3vEwcjxxCCmQmMnPpD23aCg"
 			]
 		}
 	},

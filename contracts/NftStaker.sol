@@ -2,123 +2,239 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Receiver.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./Generator.sol";
-
-
 
 contract NftStaker is Ownable {
     IERC1155 public parentNFT;
     Generator public generator;
-    address payable public ownerToPay;
     uint256 public seeMsgValue;
     uint256 public seeRandom;
+    uint16 private constant _baseValue = 3000;
+    bool private _isStopped = false;
 
-    mapping(address => Stake) public stakes;
-    mapping(address => uint256) public stakingTime;    
-    mapping(address => uint256[]) private _values;  
+    mapping(address => mapping(uint8 => Stake)) private _stakes;
 
-
-    
     struct Stake {
-        uint256 tokenId;
-        uint256 amount;
+        uint64 amount;
         uint256 timestamp;
     }
 
-    modifier requiresFee(uint fee) {
-        if (msg.value < fee) { revert(); }
+    modifier requiresFee(uint64 fee) {
+        require(msg.value > fee, "the amount of fees payed is too low");
         _;
     }
-    modifier notPresentFee(){
-       for(uint i=0;i<_values[msg.sender].length;i++){
-        if(_values[msg.sender][i]==msg.value){
-            revert();
-            }
-        }
-        _values[msg.sender].push(msg.value);
-        if(_values[msg.sender].length==100){
-            delete _values[msg.sender];
-        }
+    modifier stoppedInEmergency() {
+        require(!_isStopped);
         _;
-    }    
+    }
 
-    constructor() payable{
+    modifier onlyWhenStopped() {
+        require(_isStopped);
+        _;
+    }
+
+    function stopContract() public onlyOwner {
+        _isStopped = true;
+    }
+
+    function resumeContract() public onlyOwner {
+        _isStopped = false;
+    }
+
+    constructor() payable {
         parentNFT = IERC1155(0xd9145CCE52D386f254917e481eB44e9943F39138);
         generator = Generator(0xd9145CCE52D386f254917e481eB44e9943F39138);
-        ownerToPay = payable(msg.sender);
     }
 
+    function stakeNft(uint8 _tokenId, uint64 _amount)
+        public
+        stoppedInEmergency
+    {
+        require(
+            generator.exists(_tokenId),
+            "the nft you are trying to stake does not exists"
+        );
+        require(
+            _stakes[msg.sender][_tokenId].amount == 0 && _amount == 1,
+            "You can only stake one NFT at a time and cannot stake the same NFT twice."
+        );
+        require(
+            parentNFT.balanceOf(msg.sender, _tokenId) == _amount,
+            "You do not have the NFT to stake."
+        );
 
-    function stake(uint256 _tokenId, uint256 _amount) public {
-        stakes[msg.sender] = Stake(_tokenId, _amount, block.timestamp); 
-        parentNFT.safeTransferFrom(msg.sender, address(this), _tokenId, _amount, "0x00");
-    } 
+        _stakes[msg.sender][_tokenId] = Stake(_amount, block.timestamp);
 
-    function unstake() public payable requiresFee(0.001 ether){
-        parentNFT.safeTransferFrom(address(this), msg.sender, stakes[msg.sender].tokenId, stakes[msg.sender].amount, "0x00");
-        stakingTime[msg.sender] += (block.timestamp - stakes[msg.sender].timestamp);
-        delete stakes[msg.sender];
-        uint256 _temp=stakingTime[msg.sender]/10;
-        uint256 _result=random(0,100);
-        if(_result<=_temp){
-          generator.getLuckyReward(msg.sender);
+        parentNFT.safeTransferFrom(
+            msg.sender,
+            address(this),
+            _tokenId,
+            _amount,
+            "0x00"
+        );
+    }
+
+    function stakeToken(uint8 _tokenId, uint64 _amount)
+        public
+        stoppedInEmergency
+    {
+        require(generator.exists(_tokenId), "the token id is not correct");
+        require(
+            _amount >= 0,
+            "you have to insert an amount different from zero"
+        );
+        require(
+            parentNFT.balanceOf(msg.sender, _tokenId) >= _amount,
+            "You do not have enough quantum to stake."
+        );
+        uint64 _tempAmount = _stakes[msg.sender][_tokenId].amount + _amount;
+        uint256 _tempTimestamp = _stakes[msg.sender][_tokenId].timestamp;
+        _stakes[msg.sender][_tokenId] = Stake(_tempAmount, _tempTimestamp);
+
+        parentNFT.safeTransferFrom(
+            msg.sender,
+            address(this),
+            _tokenId,
+            _amount,
+            "0x00"
+        );
+    }
+
+    function unstakeNft(uint8 _tokenId)
+        public
+        payable
+        requiresFee(0.002 ether)
+        stoppedInEmergency
+    {
+        require(generator.exists(_tokenId), "the token id is not correct");
+        require(_stakes[msg.sender][_tokenId].amount > 0, "No stake found");
+
+        uint256 _stakingPeriod = block.timestamp -
+            _stakes[msg.sender][_tokenId].timestamp;
+        uint256 _reward = 0;
+        uint256 _rewardChance = _stakingPeriod / 10;
+        uint256 _randomNumber = _random(0, 100);
+        if (_randomNumber <= _rewardChance) {
+            _reward = _calculateValue();
         }
 
-    }  
-    function testRandom()public payable{
-        seeRandom=random(0,100);
-    }    
-    function testBlock()public payable notPresentFee{
-        seeMsgValue=msg.value;
-    }    
+        parentNFT.safeTransferFrom(
+            address(this),
+            msg.sender,
+            _tokenId,
+            _stakes[msg.sender][_tokenId].amount,
+            "0x00"
+        );
 
+        delete _stakes[msg.sender][_tokenId];
 
-     function onERC1155Received(
+        if (_reward > 0) {
+            generator.getLuckyReward(msg.sender, _reward);
+        }
+    }
+
+    function unstakeToken(uint8 _tokenId)
+        public
+        payable
+        requiresFee(0.002 ether)
+        stoppedInEmergency
+    {
+        require(generator.exists(_tokenId), "the token id is not correct");
+        require(_stakes[msg.sender][_tokenId].amount > 0, "No stake found");
+
+        uint256 _stakingPeriod = block.timestamp -
+            _stakes[msg.sender][_tokenId].timestamp;
+        uint256 _reward = 0;
+        uint256 _rewardChance = _stakingPeriod / 10;
+        uint256 _randomNumber = _random(0, 100);
+        if (_randomNumber <= _rewardChance) {
+            _reward = _calculateValue();
+
+            parentNFT.safeTransferFrom(
+                address(this),
+                msg.sender,
+                _tokenId,
+                _stakes[msg.sender][_tokenId].amount,
+                "0x00"
+            );
+        }
+
+        delete _stakes[msg.sender][_tokenId];
+
+        if (_reward > 0) {
+            generator.getLuckyReward(msg.sender, _reward);
+        }
+    }
+
+    function testRandom() public payable {
+        seeRandom = _random(0, 100);
+    }
+
+    function testBlock() public payable {
+        seeMsgValue = msg.value;
+    }
+
+    function onERC1155Received(
         address operator,
         address from,
         uint256 id,
         uint256 value,
         bytes calldata data
     ) external returns (bytes4) {
-        return bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"));
+        return
+            bytes4(
+                keccak256(
+                    "onERC1155Received(address,address,uint256,uint256,bytes)"
+                )
+            );
     }
 
-   function random(uint minNumber,uint maxNumber) private notPresentFee returns (uint amount) {
-     amount = uint(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, block.number, msg.value))) % (maxNumber-minNumber);
-     amount = amount + minNumber;
-     return amount;
-     } 
-
-         // Function to deposit Ether into this contract.
-    // Call this function along with some Ether.
-    // The balance of this contract will be automatically updated.
-    function deposit() public payable requiresFee(0.001 ether) {
+    function _random(uint8 minNumber, uint64 maxNumber)
+        private
+        returns (uint256 amount)
+    {
+        amount =
+            uint256(
+                keccak256(
+                    abi.encodePacked(
+                        block.timestamp,
+                        block.prevrandao,
+                        block.number,
+                        msg.value
+                    )
+                )
+            ) %
+            (maxNumber - minNumber);
+        amount = amount + minNumber;
+        return amount;
     }
 
-    // Call this function along with some Ether.
-    // The function will throw an error since this function is not payable.
-    function notPayable() public {}
+    // Function to deposit Ether into this contract.
+    function deposit()
+        public
+        payable
+        requiresFee(0.001 ether)
+        onlyOwner
+        stoppedInEmergency
+    {}
 
     // Function to withdraw all Ether from this contract.
-    function withdraw() public {
-        // get the amount of Ether stored in this contract
-        uint amount = address(this).balance;
+    function withdraw() public onlyOwner stoppedInEmergency {
+        require(address(this).balance > 0, "No balance to withdraw");
+        require(msg.sender == generator.owner(), "Only owner can withdraw");
 
-        // send all Ether to owner
-        // Owner can receive Ether since the address of owner is payable
-        (bool success, ) = ownerToPay.call{value: amount}("");
-        require(success, "Failed to send Ether");
+        uint256 amount = address(this).balance;
+        address payable owner = payable(generator.owner());
+        (bool success, ) = owner.call{value: amount}("");
+        require(success, "Withdrawal failed");
     }
 
-    // Function to transfer Ether from this contract to address from input
-    function transfer(address payable _to, uint _amount) public {
-        // Note that "to" is declared as payable
-        (bool success, ) = _to.call{value: _amount}("");
-        require(success, "Failed to send Ether");
+    function _calculateValue() private view returns (uint256 value) {
+        uint256 _exponent = generator.totalSupply(2) / 100000;
+        //instead of writing (3/2)^exp not supported in solidity i wrote (3^exp)/(2^exp)
+        uint256 _denominator = ((3)**_exponent) / ((2)**_exponent);
+        //100 is the minimum value that can be earned
+        return (_baseValue / _denominator) + 100;
     }
-    
-
 }
