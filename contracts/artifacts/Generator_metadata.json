@@ -264,12 +264,129 @@
 			},
 			{
 				"inputs": [],
-				"name": "nftTest",
+				"name": "nftTest1",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "uint8",
 						"name": "",
-						"type": "uint256"
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest10",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest2",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest3",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest4",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest5",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest6",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest7",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest8",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nftTest9",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
 					}
 				],
 				"stateMutability": "view",
@@ -293,9 +410,9 @@
 				"name": "quantium",
 				"outputs": [
 					{
-						"internalType": "uint256",
+						"internalType": "uint8",
 						"name": "",
-						"type": "uint256"
+						"type": "uint8"
 					}
 				],
 				"stateMutability": "view",
@@ -664,11 +781,11 @@
 			]
 		},
 		"contracts/Generator.sol": {
-			"keccak256": "0x89298df5df10e9522a56f5120368bd962cee5906e1590f2275ea5a8eac5a12ca",
+			"keccak256": "0x6447db34bd4fa21bd61f752867990ddaa72f02ec8200d25156b276766643fd91",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://c980e3b287a340a406def285cb70722d37e75f677654c6ca235e13bc436471cf",
-				"dweb:/ipfs/Qma3owiLntWUjidvfbQzy7V6aQzebbfA4ziLhaAprEm4Hc"
+				"bzz-raw://1771a3aee65aee863a0197419a79dcd38581716d33a343ece7b58089e3c05eaa",
+				"dweb:/ipfs/QmWjDYwaqUia7PRWNbn9joWbvByK7kTaaRcTocnzUUdohX"
 			]
 		}
 	},

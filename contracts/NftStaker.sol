@@ -43,8 +43,8 @@ contract NftStaker is Ownable {
     }
 
     constructor() payable {
-        parentNFT = IERC1155(0xd9145CCE52D386f254917e481eB44e9943F39138);
-        generator = Generator(0xd9145CCE52D386f254917e481eB44e9943F39138);
+        parentNFT = IERC1155(0x4E806282e342454CC40f8e03B15d15d812B825b6);
+        generator = Generator(0x4E806282e342454CC40f8e03B15d15d812B825b6);
     }
 
     function stakeNft(uint8 _tokenId, uint64 _amount)
@@ -228,6 +228,10 @@ contract NftStaker is Ownable {
         address payable owner = payable(generator.owner());
         (bool success, ) = owner.call{value: amount}("");
         require(success, "Withdrawal failed");
+    }
+    
+    function balanceStakedOf(address _account, uint8 _tokenId) external view returns (uint256 value){
+        return _stakes[_account][_tokenId].amount;
     }
 
     function _calculateValue() private view returns (uint256 value) {
