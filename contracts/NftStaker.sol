@@ -43,8 +43,8 @@ contract NftStaker is Ownable {
     }
 
     constructor() payable {
-        parentNFT = IERC1155(0x4E806282e342454CC40f8e03B15d15d812B825b6);
-        generator = Generator(0x4E806282e342454CC40f8e03B15d15d812B825b6);
+        parentNFT = IERC1155(0xe9829598C68d570512f9D0c4d1586880Da9Ce569);
+        generator = Generator(0xe9829598C68d570512f9D0c4d1586880Da9Ce569);
     }
 
     function stakeNft(uint8 _tokenId, uint64 _amount)
@@ -79,7 +79,9 @@ contract NftStaker is Ownable {
         public
         stoppedInEmergency
     {
-        require(generator.exists(_tokenId), "the token id is not correct");
+        require(generator.exists(_tokenId), 
+        "the token id is not correct"
+        );
         require(
             _amount >= 0,
             "you have to insert an amount different from zero"
