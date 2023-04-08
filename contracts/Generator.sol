@@ -36,7 +36,7 @@ contract Generator is ERC1155Supply, Ownable {
         _mint(msg.sender, nftTest8, 1, "");
         _mint(msg.sender, nftTest9, 1, "");
         _mint(msg.sender, nftTest10, 1, "");
-        
+
         _mint(msg.sender, quantium, 10000, "");
         _setURI(uri_);
     }
